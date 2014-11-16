@@ -3,7 +3,7 @@ var express = require('express'),
   exphbs = require('express-handlebars'),
   http = require('http'),
   mongoose = require('mongoose'),
-  twitter = require('ntwitter'),
+  // twitter = require('ntwitter'),
   routes = require('./routes'),
   config = require('./config'),
   streamHandler = require('./utils/streamHandler');
@@ -24,7 +24,7 @@ app.disable('etag');
 mongoose.connect(process.env.MONGOHQ_URL);
 
 // Create a new ntwitter instance
-var twit = new twitter(config.twitter);
+// var twit = new twitter(config.twitter);
 
 // Index Route
 app.get('/', routes.index);
@@ -44,6 +44,6 @@ var server = http.createServer(app).listen(port, function() {
 var io = require('socket.io').listen(server);
 
 // Set a stream listener for tweets matching tracking keywords
-twit.stream('statuses/filter',{ track: 'javascript'}, function(stream){
-  streamHandler(stream,io);
-});
+// twit.stream('statuses/filter',{ track: 'javascript'}, function(stream){
+//   streamHandler(stream,io);
+// });
