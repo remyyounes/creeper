@@ -8,8 +8,14 @@ var JSX = require('node-jsx').install(),
 var checkEmail = function(email) {
   var deferred = Q.defer();
   EmailExistence.check(email, function(result, error){
-    if(error)  deferred.reject(error)
-    else deferred.resolve(result);
+    var mailBoxStatus = {
+      email: email,
+      error: error,
+      result: result
+    };
+
+    if(error)  deferred.reject(mailBoxStatus);
+    else deferred.resolve(mailBoxStatus);
   });
   return deferred.promise;
 };
