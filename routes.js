@@ -7,7 +7,7 @@ var JSX = require('node-jsx').install(),
 
 var checkEmail = function(email) {
   var deferred = Q.defer();
-  EmailExistence.check(email, function(result, error){
+  EmailExistence.check(email, function(error, result){
     var mailBoxStatus = {
       args : arguments,
       email: email,
