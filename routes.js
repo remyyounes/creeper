@@ -32,18 +32,22 @@ module.exports = {
     Q.allSettled(mailChecks)
     .then(function (results) {
       // res.send(results);
-
+      var emails = [];
+      for (var i = 0; i < results.length; i++) {
+        var result = results[i];
+        emails.push(result.value);
+      }
       // Render React to a string, passing in our fetched tweets
       var markup = React.renderComponentToString(
         EmailCollection({
-          emails: results
+          emails: emails
         })
       );
 
       // Render our 'home' template
       res.render('home', {
         markup: markup, // Pass rendered react markup
-        state: JSON.stringify({emails: results}) // Pass current state to client side
+        state: JSON.stringify({emails: emails}) // Pass current state to client side
       });
 
     });
