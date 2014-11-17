@@ -9,7 +9,8 @@ module.exports = {
   index: function(req, res) {
     // Call static model method to get tweets in the db
     EmailExistence.check("ryounes@gmail.com", function(result, error){
-      res.send(result);
+      if(error)  res.send(error);
+      else  res.send(result);
     });
   },
 
