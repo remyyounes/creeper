@@ -2,16 +2,42 @@ var JSX = require('node-jsx').install(),
   React = require('react'),
   TweetsApp = require('./components/TweetsApp.react'),
   Tweet = require('./models/Tweet'),
-  EmailExistence = require("email-existence");
+  EmailExistence = require("email-existence"),
+  Q = require("q");
+
+var checkEmail = function(email) {
+  var deferred = Q.deferred();
+  EmailExistence.check(email, function(result, error){
+    if(error)  deferred.reject(error)
+    else deferred.resolve(result);
+  });
+  return deferred.promise;
+};
+
 
 module.exports = {
 
   index: function(req, res) {
     // Call static model method to get tweets in the db
-    EmailExistence.check("ryounes@gmail.com", function(result, error){
-      if(error)  res.send(error);
-      else  res.send(result);
+    var mailChecks = [
+      checkEmail("ryounes@gmail.com"),
+      checkEmail("remyWhat@gmail.com")
+    ];
+
+    Q.allSettled(mailChecks)
+    .then(function (results) {
+      res.send(results);
+      //
+      // results.forEach(function (result) {
+      //   if (result.state === "fulfilled") {
+      //       var value = result.value;
+      //   } else {
+      //       var reason = result.reason;
+      //   }
+      // });
     });
+
+
   },
 
   page: function(req, res) {
