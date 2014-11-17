@@ -1,6 +1,7 @@
 var JSX = require('node-jsx').install(),
   React = require('react'),
   TweetsApp = require('./components/TweetsApp.react'),
+  EmailCollection = require('./components/EmailCollection.react'),
   Tweet = require('./models/Tweet'),
   EmailExistence = require("email-existence"),
   Q = require("q");
@@ -9,8 +10,7 @@ var checkEmail = function(email) {
   var deferred = Q.defer();
   EmailExistence.check(email, function(error, result){
     var mailBoxStatus = {
-      args : arguments,
-      email: email,
+      // email: email,
       error: error,
       result: result
     };
@@ -34,16 +34,20 @@ module.exports = {
     Q.allSettled(mailChecks)
     .then(function (results) {
       res.send(results);
-      //
-      // results.forEach(function (result) {
-      //   if (result.state === "fulfilled") {
-      //       var value = result.value;
-      //   } else {
-      //       var reason = result.reason;
-      //   }
-      // });
     });
 
+    // Render React to a string, passing in our fetched tweets
+    var markup = React.renderComponentToString(
+      EmailCollection({
+        emails: results
+      })
+    );
+
+    // Render our 'home' template
+    res.render('home', {
+      markup: markup, // Pass rendered react markup
+      // state: JSON.stringify(tweets) // Pass current state to client side
+    });
 
   },
 
