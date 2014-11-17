@@ -41,9 +41,14 @@ module.exports = {
         emails.push(result.value);
       }
       // Render React to a string, passing in our fetched tweets
-      var markup = React.renderComponentToString(
-        EmailCollection({ emails: emails })
-      );
+      try {
+        var markup = React.renderComponentToString(
+          EmailCollection({ emails: emails })
+        );
+
+      } catch(e){
+        console.log("error!", e.stack());
+      }
 
       console.log("soFar");
       // Render our 'home' template
