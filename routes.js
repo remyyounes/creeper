@@ -8,7 +8,7 @@ var checkEmail = function(email) {
   var deferred = Q.defer();
   EmailExistence.check(email, function(error, result){
     var mailBoxStatus = {
-      // email: email,
+      email: email,
       error: error,
       result: result
     };
