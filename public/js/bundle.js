@@ -2,279 +2,44 @@
 /** @jsx React.DOM */
 
 var React = require('react');
-var TweetsApp = require('./components/TweetsApp.react');
+var EmailCollection = require('./components/EmailCollection.react');
 
 // Snag the initial state that was passed from the server side
 var initialState = JSON.parse(document.getElementById('initial-state').innerHTML)
 
 // Render the components, picking up where react left off on the server
 React.renderComponent(
-  TweetsApp({tweets: initialState}),
+  EmailCollection({emails: initialState}),
   document.getElementById('react-app')
 );
-},{"./components/TweetsApp.react":"/Applications/MAMP/htdocs/javascript/creeper/components/TweetsApp.react.js","react":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/react/react.js"}],"/Applications/MAMP/htdocs/javascript/creeper/components/Loader.react.js":[function(require,module,exports){
+
+},{"./components/EmailCollection.react":"/Applications/MAMP/htdocs/javascript/creeper/components/EmailCollection.react.js","react":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/react/react.js"}],"/Applications/MAMP/htdocs/javascript/creeper/components/EmailCollection.react.js":[function(require,module,exports){
 /** @jsx React.DOM */
 
 var React = require('react');
 
-module.exports = Loader = React.createClass({displayName: 'Loader',
-  render: function(){
-    return (
-      React.DOM.div({className: "loader " + (this.props.paging ? "active" : "")}, 
-        React.DOM.img({src: "svg/loader.svg"})
-      )
-    )
-  }
-});
-},{"react":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/react/react.js"}],"/Applications/MAMP/htdocs/javascript/creeper/components/NotificationBar.react.js":[function(require,module,exports){
-/** @jsx React.DOM */
-
-var React = require('react');
-
-module.exports = NotificationBar = React.createClass({displayName: 'NotificationBar',
-  render: function(){
-    var count = this.props.count;
-    return (
-      React.DOM.div({className: "notification-bar" + (count > 0 ? ' active' : '')}, 
-        React.DOM.p(null, "There are ", count, " new tweets! ", React.DOM.a({href: "#top", onClick: this.props.onShowNewTweets}, "Click here to see them."))
-      )
-    )
-  }
-});
-},{"react":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/react/react.js"}],"/Applications/MAMP/htdocs/javascript/creeper/components/Tweet.react.js":[function(require,module,exports){
-/** @jsx React.DOM */
-
-var React = require('react');
-
-module.exports = Tweet = React.createClass({displayName: 'Tweet',
-  render: function(){
-    var tweet = this.props.tweet;
-    return (
-      React.DOM.li({className: "tweet" + (tweet.active ? ' active' : '')}, 
-        React.DOM.img({src: tweet.avatar, className: "avatar"}), 
-        React.DOM.blockquote(null, 
-          React.DOM.cite(null, 
-            React.DOM.a({href: "http://www.twitter.com/" + tweet.screenname}, tweet.author), 
-            React.DOM.span({className: "screen-name"}, "@", tweet.screenname)
-          ), 
-          React.DOM.span({className: "content"}, tweet.body)
-        )
-      )
-    )
-  }
-});
-},{"react":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/react/react.js"}],"/Applications/MAMP/htdocs/javascript/creeper/components/Tweets.react.js":[function(require,module,exports){
-/** @jsx React.DOM */
-
-var React = require('react');
-var Tweet = require('./Tweet.react.js');
-
-module.exports = Tweets = React.createClass({displayName: 'Tweets',
-
-  // Render our tweets
-  render: function(){
-
-    // Build list items of single tweet components using map
-    var content = this.props.tweets.map(function(tweet){
-      return (
-        Tweet({key: tweet._id, tweet: tweet})
-      )
-    });
-
-    // Return ul filled with our mapped tweets
-    return (
-      React.DOM.ul({className: "tweets"}, content)
-    )
-
-  }
-
-}); 
-},{"./Tweet.react.js":"/Applications/MAMP/htdocs/javascript/creeper/components/Tweet.react.js","react":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/react/react.js"}],"/Applications/MAMP/htdocs/javascript/creeper/components/TweetsApp.react.js":[function(require,module,exports){
-/** @jsx React.DOM */
-
-var React = require('react');
-var Tweets = require('./Tweets.react.js');
-var Loader = require('./Loader.react.js');
-var NotificationBar = require('./NotificationBar.react.js');
-
-// Export the TweetsApp component
-module.exports = TweetsApp = React.createClass({displayName: 'TweetsApp',
-
-  // Method to add a tweet to our timeline
-  addTweet: function(tweet){
-
-    // Get current application state
-    var updated = this.state.tweets;
-
-    // Increment the unread count
-    var count = this.state.count + 1;
-
-    // Increment the skip count
-    var skip = this.state.skip + 1;
-
-    // Add tweet to the beginning of the tweets array
-    updated.unshift(tweet);
-
-    // Set application state
-    this.setState({tweets: updated, count: count, skip: skip});
-
-  },
-
-  // Method to get JSON from server by page
-  getPage: function(page){
-
-    // Setup our ajax request
-    var request = new XMLHttpRequest(), self = this;
-    request.open('GET', 'page/' + page + "/" + this.state.skip, true);
-    request.onload = function() {
-
-      // If everything is cool...
-      if (request.status >= 200 && request.status < 400){
-
-        // Load our next page
-        self.loadPagedTweets(JSON.parse(request.responseText));
-
-      } else {
-
-        // Set application state (Not paging, paging complete)
-        self.setState({paging: false, done: true});
-
-      }
-    };
-
-    // Fire!
-    request.send();
-
-  },
-
-  // Method to show the unread tweets
-  showNewTweets: function(){
-
-    // Get current application state
-    var updated = this.state.tweets;
-
-    // Mark our tweets active
-    updated.forEach(function(tweet){
-      tweet.active = true;
-    });
-
-    // Set application state (active tweets + reset unread count)
-    this.setState({tweets: updated, count: 0});
-
-  },
-
-  // Method to load tweets fetched from the server
-  loadPagedTweets: function(tweets){
-
-    // So meta lol
-    var self = this;
-
-    // If we still have tweets...
-    if(tweets.length > 0) {
-
-      // Get current application state
-      var updated = this.state.tweets;
-
-      // Push them onto the end of the current tweets array
-      tweets.forEach(function(tweet){
-        updated.push(tweet);
-      });
-
-      // This app is so fast, I actually use a timeout for dramatic effect
-      // Otherwise you'd never see our super sexy loader svg
-      setTimeout(function(){
-
-        // Set application state (Not paging, add tweets)
-        self.setState({tweets: updated, paging: false});
-
-      }, 1000);
-
-    } else {
-
-      // Set application state (Not paging, paging complete)
-      this.setState({done: true, paging: false});
-
-    }
-  },
-
-  // Method to check if more tweets should be loaded, by scroll position
-  checkWindowScroll: function(){
-
-    // Get scroll pos & window data
-    var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-    var s = (document.body.scrollTop || document.documentElement.scrollTop || 0);
-    var scrolled = (h + s) > document.body.offsetHeight;
-
-    // If scrolled enough, not currently paging and not complete...
-    if(scrolled && !this.state.paging && !this.state.done) {
-
-      // Set application state (Paging, Increment page)
-      this.setState({paging: true, page: this.state.page + 1});
-
-      // Get the next page of tweets from the server
-      this.getPage(this.state.page);
-
-    }
-  },
-
-  // Set the initial component state
-  getInitialState: function(props){
-
-    props = props || this.props;
-
-    // Set initial application state using props
+var EmailCollection =  React.createClass({displayName: 'EmailCollection',
+  getinitialState: function(){
     return {
-      tweets: props.tweets,
-      count: 0,
-      page: 0,
-      paging: false,
-      skip: 0,
-      done: false
-    };
-
+      emails: this.props.emails
+    }
   },
-
-  componentWillReceiveProps: function(newProps, oldProps){
-    this.setState(this.getInitialState(newProps));
-  },
-
-  // Called directly after component rendering, only on client
-  componentDidMount: function(){
-
-    // Preserve self reference
-    var self = this;
-
-    // Initialize socket.io
-    var socket = io.connect();
-
-    // On tweet event emission...
-    socket.on('tweet', function (data) {
-
-        // Add a tweet to our queue
-        self.addTweet(data);
-
-    });
-
-    // Attach scroll event to the window for infinity paging
-    window.addEventListener('scroll', this.checkWindowScroll);
-
-  },
-
-  // Render the component
   render: function(){
-
+    var emails = []
+    var allEmails = this.props.emails;
+    for (var i = 0; i < allEmails.length; i++) {
+      var email = allEmails[i];
+      emails.push(React.DOM.li(null, email.email, " | ", email.value.result));
+    }
     return (
-      React.DOM.div({className: "tweets-app"}, 
-        Tweets({tweets: this.state.tweets}), 
-        Loader({paging: this.state.paging}), 
-        NotificationBar({count: this.state.count, onShowNewTweets: this.showNewTweets})
-      )
+      React.DOM.ul(null, emails)
     )
-
   }
-
 });
-},{"./Loader.react.js":"/Applications/MAMP/htdocs/javascript/creeper/components/Loader.react.js","./NotificationBar.react.js":"/Applications/MAMP/htdocs/javascript/creeper/components/NotificationBar.react.js","./Tweets.react.js":"/Applications/MAMP/htdocs/javascript/creeper/components/Tweets.react.js","react":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/react/react.js"}],"/Applications/MAMP/htdocs/javascript/creeper/node_modules/react/lib/AutoFocusMixin.js":[function(require,module,exports){
+
+module.exports = EmailCollection;
+
+},{"react":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/react/react.js"}],"/Applications/MAMP/htdocs/javascript/creeper/node_modules/react/lib/AutoFocusMixin.js":[function(require,module,exports){
 /**
  * Copyright 2013-2014 Facebook, Inc.
  *

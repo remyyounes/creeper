@@ -2,7 +2,7 @@
 var express = require('express'),
   exphbs = require('express-handlebars'),
   http = require('http'),
-  mongoose = require('mongoose'),
+  // mongoose = require('mongoose'),
   // twitter = require('ntwitter'),
   routes = require('./routes'),
   config = require('./config'),
@@ -21,7 +21,7 @@ app.disable('etag');
 
 // Connect to our mongo database
 // mongoose.connect('mongodb://localhost/react-tweets');
-mongoose.connect(process.env.MONGOHQ_URL);
+// mongoose.connect(process.env.MONGOHQ_URL);
 
 // Create a new ntwitter instance
 // var twit = new twitter(config.twitter);
