@@ -33,22 +33,22 @@ module.exports = {
 
     Q.allSettled(mailChecks)
     .then(function (results) {
-      res.send(results);
+      // res.send(results);
+
+      // Render React to a string, passing in our fetched tweets
+      var markup = React.renderComponentToString(
+        EmailCollection({
+          emails: results
+        })
+      );
+
+      // Render our 'home' template
+      res.render('home', {
+        markup: markup, // Pass rendered react markup
+        // state: JSON.stringify(tweets) // Pass current state to client side
+      });
+
     });
-
-    // Render React to a string, passing in our fetched tweets
-    var markup = React.renderComponentToString(
-      EmailCollection({
-        emails: results
-      })
-    );
-
-    // Render our 'home' template
-    res.render('home', {
-      markup: markup, // Pass rendered react markup
-      // state: JSON.stringify(tweets) // Pass current state to client side
-    });
-
   },
 
   page: function(req, res) {
