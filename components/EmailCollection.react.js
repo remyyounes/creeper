@@ -9,7 +9,8 @@ var EmailCollection =  React.createClass({
     }
   },
   render: function(){
-    var emails = []
+    console.log("RENDER");
+    var emails = [];
     var allEmails = this.props.emails;
     for (var i = 0; i < allEmails.length; i++) {
       var email = allEmails[i];
