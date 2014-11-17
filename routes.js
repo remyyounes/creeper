@@ -42,6 +42,7 @@ module.exports = {
       }
       // Render React to a string, passing in our fetched tweets
       try {
+        console.log("truing");
         var markup = React.renderComponentToString(
           EmailCollection({ emails: emails })
         );
