@@ -43,7 +43,7 @@ module.exports = {
       // Render our 'home' template
       res.render('home', {
         markup: markup, // Pass rendered react markup
-        state: JSON.stringify(emails) // Pass current state to client side
+        state: JSON.stringify({emails: results}) // Pass current state to client side
       });
 
     });
