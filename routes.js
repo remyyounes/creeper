@@ -1,27 +1,15 @@
 var JSX = require('node-jsx').install(),
   React = require('react'),
   TweetsApp = require('./components/TweetsApp.react'),
-  Tweet = require('./models/Tweet');
+  Tweet = require('./models/Tweet'),
+  EmailExistence = require("email-existence");
 
 module.exports = {
 
   index: function(req, res) {
     // Call static model method to get tweets in the db
-    Tweet.getTweets(0,0, function(tweets, pages) {
-
-      // Render React to a string, passing in our fetched tweets
-      var markup = React.renderComponentToString(
-        TweetsApp({
-          tweets: tweets
-        })
-      );
-
-      // Render our 'home' template
-      res.render('home', {
-        markup: markup, // Pass rendered react markup
-        state: JSON.stringify(tweets) // Pass current state to client side
-      });
-
+    EmailExistence.check("ryounes@gmail.com", function(res,err){
+      res.send(res ? "Good Email" : "Bad Email");
     });
   },
 
