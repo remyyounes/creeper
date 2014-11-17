@@ -36,7 +36,8 @@ module.exports = {
       for (var i = 0; i < results.length; i++) {
         var result = results[i];
         console.log("===========");
-        console.log(result);
+        console.log(result.value);
+        console.log("-----------");
         emails.push(result.value);
       }
       // Render React to a string, passing in our fetched tweets
