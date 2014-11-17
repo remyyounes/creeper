@@ -13,7 +13,7 @@ var EmailCollection =  React.createClass({
     var allEmails = this.props.emails;
     for (var i = 0; i < allEmails.length; i++) {
       var email = allEmails[i];
-      emails.push(<li>{email.email} | {email.value.result} | {JSON.stringify(email)}</li>);
+      emails.push(<li>{email.email} | {JSON.stringify(email)}</li>);
     }
     console.log("emails", emails);
     return (
