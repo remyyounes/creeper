@@ -45,11 +45,13 @@ module.exports = {
         EmailCollection({ emails: emails })
       );
 
+      console.log("soFar");
       // Render our 'home' template
       res.render('home', {
         markup: markup, // Pass rendered react markup
         state: JSON.stringify({emails: emails}) // Pass current state to client side
       });
+      console.log("soGood");
 
     });
   },
