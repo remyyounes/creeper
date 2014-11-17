@@ -35,13 +35,13 @@ module.exports = {
       var emails = [];
       for (var i = 0; i < results.length; i++) {
         var result = results[i];
+        console.log("===========");
+        console.log(result);
         emails.push(result.value);
       }
       // Render React to a string, passing in our fetched tweets
       var markup = React.renderComponentToString(
-        EmailCollection({
-          emails: emails
-        })
+        EmailCollection({ emails: emails })
       );
 
       // Render our 'home' template

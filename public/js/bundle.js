@@ -29,7 +29,7 @@ var EmailCollection =  React.createClass({displayName: 'EmailCollection',
     var allEmails = this.props.emails;
     for (var i = 0; i < allEmails.length; i++) {
       var email = allEmails[i];
-      emails.push(React.DOM.li(null, email.email, " | ", email.value.result));
+      emails.push(React.DOM.li(null, email.email, " | ", email.value.result, " | ", JSON.stringify(email)));
     }
     return (
       React.DOM.ul(null, emails)
