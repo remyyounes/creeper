@@ -28,6 +28,7 @@ app.disable('etag');
 
 // Index Route
 app.get('/', routes.index);
+app.get('/check/:email', routes.check);
 
 // Page Route
 app.get('/page/:page/:skip', routes.page);

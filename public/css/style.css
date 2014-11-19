@@ -1,3 +1,22 @@
+.email-checks li {    }
+.email-checks li.valid {
+  color: green;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 *
 {
     box-sizing: border-box;

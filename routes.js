@@ -2,20 +2,33 @@ var JSX = require('node-jsx').install(),
   React = require('react'),
   EmailCollection = require('./components/EmailCollection.react'),
   EmailExistence = require("email-existence"),
-  Q = require("q");
+  Q = require("q"),
+  _ = require("underscore");
+
+var offline = true;
 
 var checkEmail = function(email) {
   var deferred = Q.defer();
-  EmailExistence.check(email, function(error, result){
-    var mailBoxStatus = {
+  if(offline){
+    var mock = {
       email: email,
-      error: error,
-      result: result
+      error: null,
+      result: true
     };
+    deferred.resolve(mock);
+  }else{
+    EmailExistence.check(email, function(error, result){
+      var mailBoxStatus = {
+        email: email,
+        error: error,
+        result: result
+      };
 
-    if(error)  deferred.reject(mailBoxStatus);
-    else deferred.resolve(mailBoxStatus);
-  });
+      if(error)  deferred.reject(mailBoxStatus);
+      else deferred.resolve(mailBoxStatus);
+    });
+  }
+
   return deferred.promise;
 };
 
@@ -24,43 +37,34 @@ module.exports = {
 
   index: function(req, res) {
     // Call static model method to get tweets in the db
-    var mailChecks = [
-      checkEmail("ryounes@gmail.com"),
-      checkEmail("remyWhat@gmail.com")
-    ];
+    var markup = React.renderComponentToString(
+      EmailCollection()
+    );
 
-    Q.allSettled(mailChecks)
-    .then(function (results) {
-      // res.send(results);
-      var emails = [];
-      for (var i = 0; i < results.length; i++) {
-        var result = results[i];
-        console.log("===========");
-        console.log(result.value);
-        console.log("-----------");
-        emails.push(result.value);
-      }
-      // Render React to a string, passing in our fetched tweets
-      try {
-        console.log("truing");
-        var markup = React.renderComponentToString(
-          EmailCollection({ emails: emails })
-        );
-
-      } catch(e){
-        console.log("error!", e.stack());
-      }
-
-      console.log("soFar");
-      // Render our 'home' template
-      res.render('home', {
-        markup: markup, // Pass rendered react markup
-        state: JSON.stringify({emails: emails}) // Pass current state to client side
-      });
-      console.log("soGood");
-
+    // Render our 'home' template
+    res.render('home', {
+      markup: markup, // Pass rendered react markup
+      state: JSON.stringify({ }) // Pass current state to client side
     });
   },
+
+  check: function(req, res) {
+    var deferred = Q.defer();
+
+    console.log(req.params.address);
+    var mock = {
+      email: req.params.email,
+      error: null,
+      result: Math.random() > 0.5
+    };
+    deferred.resolve(mock);
+    var promise = deferred.promise;
+    promise.then(function(checkResults){
+      res.send(checkResults);
+    });
+    return promise;
+  },
+
 
   page: function(req, res) {
     // Fetch tweets by page via param
@@ -70,6 +74,13 @@ module.exports = {
     //   res.send(tweets);
     //
     // });
+  },
+
+  generateEmails: function(names) {
+    var combinations = _map(transformFunctions, function(transform) {
+      return transform(names);
+    });
+    return combinations;
   }
 
 }
