@@ -69,7 +69,7 @@ var generateEmailsNames = function(names) {
   var combinations = _.map(transformFunctions, function(transform) {
     return _.map(namesPermutations, transform);
   });
-  return _.flatten(combinations);
+  return _.unique(_.flatten(combinations));
 };
 
 var generateNamesPermutations = function(names) {
@@ -99,6 +99,7 @@ var generateNamePermutations = function (name) {
   var permutations = [];
   permutations.push([name]);
   permutations.push([name[0]]);
+  permutations.push([]);
   return permutations;
 }
 
