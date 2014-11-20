@@ -28,7 +28,7 @@ var EmailCollection =  React.createClass({
     return (<div>
       <ul className="email-checks">{emails}</ul>
       <div className="adder">
-        <input ref="adderName" placeholder="name (comma separated)"/>
+        <input ref="adderName" placeholder="name (space separated)"/>
         <input ref="adderHostname" placeholder="hostname (ie: gmail.com)" />
         <button onClick={this.onAdd}>Check</button>
       </div>
