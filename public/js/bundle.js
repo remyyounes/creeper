@@ -21121,6 +21121,7 @@ process.chdir = function (dir) {
 },{}],"/Applications/MAMP/htdocs/javascript/creeper/stores/EmailStore.js":[function(require,module,exports){
 var Reflux = require('reflux');
 var EmailCheckerActions = require('../actions/EmailCheckerActions.js');
+var _ = require('underscore');
 
 var EmailStore = Reflux.createStore({
   _collection: [],
@@ -21130,10 +21131,13 @@ var EmailStore = Reflux.createStore({
   check: function(email) {
     var desc = getEmailDescriptor(email);
     var url = "/" + ["check", desc.names, desc.host, desc.ext].join("/");
+    var store = this;
     $.get(url)
-    .then(function(serverData) {
-      this.addObject(serverData);
-    }.bind(this));
+    .then(function(checkedEmails) {
+      _.each(checkedEmails, function(email) {
+        store.addObject(email);
+      });
+    });
   },
   getAll: function() {
     return this._collection;
@@ -21158,4 +21162,4 @@ var getEmailDescriptor = function (email) {
 
 module.exports = EmailStore;
 
-},{"../actions/EmailCheckerActions.js":"/Applications/MAMP/htdocs/javascript/creeper/actions/EmailCheckerActions.js","reflux":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/reflux/src/index.js"}]},{},["/Applications/MAMP/htdocs/javascript/creeper/app.js"]);
+},{"../actions/EmailCheckerActions.js":"/Applications/MAMP/htdocs/javascript/creeper/actions/EmailCheckerActions.js","reflux":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/reflux/src/index.js","underscore":"/Applications/MAMP/htdocs/javascript/creeper/node_modules/underscore/underscore.js"}]},{},["/Applications/MAMP/htdocs/javascript/creeper/app.js"]);

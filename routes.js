@@ -52,13 +52,17 @@ module.exports = {
     var deferred = Q.defer();
     var hostname = req.params.host + req.params.ext;
     var emails = generateEmailsNames(req.params.names.split("."));
-    var email = [emails[0], "@", hostname].join("");
-    var mock = {
-      email: email,
-      error: null,
-      result: Math.random() > 0.5
-    };
-    deferred.resolve(mock);
+    var checkResults = _.map(emails, function(mail) {
+      var email = [mail, "@", hostname].join("");
+      var mock = {
+        email: email,
+        error: null,
+        result: Math.random() > 0.5
+      };
+      return mock;
+    });
+    deferred.resolve(checkResults);
+
     var promise = deferred.promise;
     promise.then(function(checkResults){
       res.send(checkResults);
