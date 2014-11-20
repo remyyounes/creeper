@@ -5,7 +5,7 @@ var JSX = require('node-jsx').install(),
   Q = require("q"),
   _ = require("underscore");
 
-var offline = true;
+var offline = 0;
 
 var checkEmail = function(email) {
   var deferred = Q.defer();
@@ -49,23 +49,15 @@ module.exports = {
   },
 
   check: function(req, res) {
-    var deferred = Q.defer();
-    var hostname = req.params.host + req.params.ext;
+    var hostname = [req.params.host, ".", req.params.ext].join("");
     var emails = generateEmailsNames(req.params.names.split("."));
-    var checkResults = _.map(emails, function(mail) {
-      var email = [mail, "@", hostname].join("");
-      var mock = {
-        email: email,
-        error: null,
-        result: Math.random() > 0.5
-      };
-      return mock;
-    });
-    deferred.resolve(checkResults);
 
-    var promise = deferred.promise;
-    promise.then(function(checkResults){
-      res.send(checkResults);
+    var checkPromises = _.map(emails, function(mail) {
+      var email = [mail, "@", hostname].join("");
+      return checkEmail(email);
+    });
+    var promise = Q.allSettled(checkPromises).then(function(emailResults){
+      res.send(_.pluck(emailResults, "value"));
     });
     return promise;
   },
