@@ -21,7 +21,7 @@ var EmailStore = Reflux.createStore({
     return this._collection;
   },
   addObject: function(object) {
-    this._collection.push(object);
+    object && this._collection.push(object);
     this.trigger();
   }
 });
