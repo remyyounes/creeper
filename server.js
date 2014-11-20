@@ -28,7 +28,7 @@ app.disable('etag');
 
 // Index Route
 app.get('/', routes.index);
-app.get('/check/:names/:host/:ext', routes.check);
+app.get('/check/:names/:hostname', routes.check);
 
 
 // Set /public as our static content dir

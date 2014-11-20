@@ -49,11 +49,9 @@ module.exports = {
   },
 
   check: function(req, res) {
-    var hostname = [req.params.host, ".", req.params.ext].join("");
-    var emails = generateEmailsNames(req.params.names.split("."));
-
+    var emails = generateEmailsNames(req.params.names.split(" "));
     var checkPromises = _.map(emails, function(mail) {
-      var email = [mail, "@", hostname].join("");
+      var email = [mail, "@", req.params.hostname].join("");
       return checkEmail(email);
     });
     var promise = Q.allSettled(checkPromises).then(function(emailResults){

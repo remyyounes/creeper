@@ -51,7 +51,8 @@ var EmailCollection =  React.createClass({displayName: 'EmailCollection',
     return (React.DOM.div(null, 
       React.DOM.ul({className: "email-checks"}, emails), 
       React.DOM.div({className: "adder"}, 
-        React.DOM.input({ref: "adderString"}), 
+        React.DOM.input({ref: "adderName", placeholder: "name (comma separated)"}), 
+        React.DOM.input({ref: "adderHostname", placeholder: "hostname (ie: gmail.com)"}), 
         React.DOM.button({onClick: this.onAdd}, "Check")
       )
     ));
@@ -64,8 +65,9 @@ var EmailCollection =  React.createClass({displayName: 'EmailCollection',
     });
   },
   onAdd: function() {
-    var email = this.refs.adderString.getDOMNode().value;
-    email && EmailCheckerActions.check(email);
+    var names = this.refs.adderName.getDOMNode().value;
+    var hostname = this.refs.adderHostname.getDOMNode().value;
+    EmailCheckerActions.check(names, hostname);
   },
   onStoreUpdate: function() {
     this.setState({emails: EmailStore.getAll()});
@@ -21128,9 +21130,8 @@ var EmailStore = Reflux.createStore({
   init: function() {
     this.listenTo(EmailCheckerActions.check, this.check);
   },
-  check: function(email) {
-    var desc = getEmailDescriptor(email);
-    var url = "/" + ["check", desc.names, desc.host, desc.ext].join("/");
+  check: function(names, hostname) {
+    var url = "/" + ["check", names, hostname].join("/");
     var store = this;
     $.get(url)
     .then(function(checkedEmails) {
@@ -21147,17 +21148,6 @@ var EmailStore = Reflux.createStore({
     this.trigger();
   }
 });
-
-var getEmailDescriptor = function (email) {
-  var emailParts = email.split("@");
-  var hostname = emailParts[1];
-  var hostNameArray = hostname.split(".");
-  return {
-    names: emailParts[0],
-    host: hostNameArray[0],
-    ext: hostNameArray[1]
-  }
-}
 
 
 module.exports = EmailStore;

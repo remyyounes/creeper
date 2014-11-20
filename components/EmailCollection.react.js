@@ -28,7 +28,8 @@ var EmailCollection =  React.createClass({
     return (<div>
       <ul className="email-checks">{emails}</ul>
       <div className="adder">
-        <input ref="adderString"/>
+        <input ref="adderName" placeholder="name (comma separated)"/>
+        <input ref="adderHostname" placeholder="hostname (ie: gmail.com)" />
         <button onClick={this.onAdd}>Check</button>
       </div>
     </div>);
@@ -41,8 +42,9 @@ var EmailCollection =  React.createClass({
     });
   },
   onAdd: function() {
-    var email = this.refs.adderString.getDOMNode().value;
-    email && EmailCheckerActions.check(email);
+    var names = this.refs.adderName.getDOMNode().value;
+    var hostname = this.refs.adderHostname.getDOMNode().value;
+    EmailCheckerActions.check(names, hostname);
   },
   onStoreUpdate: function() {
     this.setState({emails: EmailStore.getAll()});
