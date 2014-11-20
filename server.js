@@ -10,7 +10,7 @@ var express = require('express'),
 
 // Create an express instance and set a port variable
 var app = express();
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 5000;
 
 // Set handlebars as the templating engine
 app.engine('handlebars', exphbs({ defaultLayout: 'main'}));
@@ -28,10 +28,8 @@ app.disable('etag');
 
 // Index Route
 app.get('/', routes.index);
-app.get('/check/:email', routes.check);
+app.get('/check/:names/:host/:ext', routes.check);
 
-// Page Route
-app.get('/page/:page/:skip', routes.page);
 
 // Set /public as our static content dir
 app.use("/", express.static(__dirname + "/public/"));

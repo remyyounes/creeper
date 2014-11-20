@@ -50,10 +50,11 @@ module.exports = {
 
   check: function(req, res) {
     var deferred = Q.defer();
-
-    console.log(req.params.address);
+    var hostname = req.params.host + req.params.ext;
+    var emails = generateEmailsNames(req.params.names.split("."));
+    var email = [emails[0], "@", hostname].join("");
     var mock = {
-      email: req.params.email,
+      email: email,
       error: null,
       result: Math.random() > 0.5
     };
@@ -65,22 +66,51 @@ module.exports = {
     return promise;
   },
 
+};
 
-  page: function(req, res) {
-    // Fetch tweets by page via param
-    // Tweet.getTweets(req.params.page, req.params.skip, function(tweets) {
-    //
-    //   // Render as JSON
-    //   res.send(tweets);
-    //
-    // });
-  },
+var generateEmailsNames = function(names) {
+  debugger;
+  if (names.length < 1) return null;
+  var namesPermutations = generateNamesPermutations(names);
+  var combinations = _.map(transformFunctions, function(transform) {
+    return _.map(namesPermutations, transform);
+  });
+  return _.flatten(combinations);
+};
 
-  generateEmails: function(names) {
-    var combinations = _map(transformFunctions, function(transform) {
-      return transform(names);
+var generateNamesPermutations = function(names) {
+  if (names.length < 1) return null;
+  var currentName = names.shift();
+  var rest = generateNamesPermutations(names);
+  var permutations = combinePermutations(currentName, rest);
+  return permutations;
+};
+
+var combinePermutations = function(currentName, listPermutations) {
+  var permutations = [];
+  var namePermutations = generateNamePermutations(currentName);
+  if(listPermutations){
+    _.each(listPermutations, function(permutation) {
+      _.each(namePermutations, function(namePermutation) {
+        permutations.push(_.flatten([namePermutation, permutation]));
+      });
     });
-    return combinations;
+  }else{
+    permutations = namePermutations;
   }
+  return permutations;
+};
 
+var generateNamePermutations = function (name) {
+  var permutations = [];
+  permutations.push([name]);
+  permutations.push([name[0]]);
+  return permutations;
 }
+
+var transformFunctions = [
+  function(names) { return names.join("."); },
+  function(names) { return names.join("-"); },
+  function(names) { return names.join("_"); },
+  function(names) { return names.join(""); }
+];

@@ -21128,7 +21128,9 @@ var EmailStore = Reflux.createStore({
     this.listenTo(EmailCheckerActions.check, this.check);
   },
   check: function(email) {
-    $.get("/check/"+ email)
+    var desc = getEmailDescriptor(email);
+    var url = "/" + ["check", desc.names, desc.host, desc.ext].join("/");
+    $.get(url)
     .then(function(serverData) {
       this.addObject(serverData);
     }.bind(this));
@@ -21141,6 +21143,17 @@ var EmailStore = Reflux.createStore({
     this.trigger();
   }
 });
+
+var getEmailDescriptor = function (email) {
+  var emailParts = email.split("@");
+  var hostname = emailParts[1];
+  var hostNameArray = hostname.split(".");
+  return {
+    names: emailParts[0],
+    host: hostNameArray[0],
+    ext: hostNameArray[1]
+  }
+}
 
 
 module.exports = EmailStore;
