@@ -11,7 +11,7 @@ var EmailCollection =  React.createClass({
   getinitialState: function(){
     return {
       emails: []
-    }
+    };
   },
   componentDidMount: function() {
     this.listenTo(EmailStore, this.onStoreUpdate);

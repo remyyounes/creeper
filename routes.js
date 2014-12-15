@@ -22,7 +22,7 @@ var checkEmail = function(email) {
         email: email,
         error: error,
         result: result
-      };
+      }
 
       if(error)  deferred.reject(mailBoxStatus);
       else deferred.resolve(mailBoxStatus);
