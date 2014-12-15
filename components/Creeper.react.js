@@ -1,5 +1,5 @@
 var React = require("react");
-var FileDropper = require("./FileDroper.react");
+var FileDropper = require("./FileDropper.react");
 var Creeper = React.createClass({
   render: function() {
     return (
